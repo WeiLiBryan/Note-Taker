@@ -1,6 +1,7 @@
 var express = require("express");
 var path = require('path');
 var fs = require('fs');
+const { deepStrictEqual } = require("assert");
 
 var app = express();
 var PORT = process.env.PORT || 8080;
@@ -23,7 +24,12 @@ app.get("/notes", function(req, res) {
 });
 
 app.get("/api/notes", function(req, res) {
-    return res.json(notes);
+    fs.readFile(outputPath, (err,data) => {
+        if (err) throw err;
+        var output = JSON.parse(data);
+        console.log(output);
+        return res.json(output);
+    });
 });
 
 app.post("/api/notes", function(req, res) {
@@ -31,6 +37,7 @@ app.post("/api/notes", function(req, res) {
     strNotes = JSON.stringify(notes);
     fs.writeFile(outputPath, strNotes, (err) => {
         if(err) throw err;
+        console.log("New note saved");
     });
 });
 
