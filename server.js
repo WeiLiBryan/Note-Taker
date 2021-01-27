@@ -30,7 +30,13 @@ app.get("/api/notes", function(req, res) {
     });
 });
 
+// app.get("/api/notes/:id", function(req, res) {
+    
+// });
+
 app.post("/api/notes", function(req, res) {
+    // Assigns an id to the object which corresponds to the length of the array
+    req.body.id = notes.length + 1;
     notes.push(req.body);
     var strNotes = JSON.stringify(notes);
     fs.writeFile(outputPath, strNotes, (err) => {
@@ -40,22 +46,16 @@ app.post("/api/notes", function(req, res) {
     res.send("saved");
 });
 
-app.delete("/api/notes/:id", function(req, res) {
-    var index = req.body.index;
+app.delete("/api/notes/:id", async function(req, res) {
+    var index = req.params.id;
     var temp = [];
-    for (var i = 0; i < notes.length; i++) {
-        if (i !== parseInt(index)) {
-          temp.push(notes[i]);
-        }
-    }
+
     newNotes = temp;
     var strNotes = JSON.stringify(newNotes);
     fs.writeFile(outputPath, strNotes, (err) => {
         if(err) throw err;
-        console.log("Deleted");
     });
-    res.send("deleted");
-})
+});
 
 app.listen(PORT, function() {
     console.log("App listening on PORT: " + PORT);
