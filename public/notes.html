@@ -42,8 +42,6 @@
   <script type="text/javascript">
     $(".fa-save").on("click", function(event) {
       event.preventDefault();
-      console.log($('.note-title').val());
-      console.log($('.note-textarea').val());
       var newNote = {
         title: $('.note-title').val().trim(),
         text: $('.note-textarea').val().trim()
