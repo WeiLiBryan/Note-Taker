@@ -1,10 +1,9 @@
 var express = require("express");
 var path = require('path');
 var fs = require('fs');
-const { deepStrictEqual } = require("assert");
 
 var app = express();
-var PORT = process.env.PORT || 8080;
+var PORT = process.env.PORT || 8081;
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
@@ -27,20 +26,36 @@ app.get("/api/notes", function(req, res) {
     fs.readFile(outputPath, (err,data) => {
         if (err) throw err;
         var output = JSON.parse(data);
-        console.log(output);
         return res.json(output);
     });
 });
 
 app.post("/api/notes", function(req, res) {
     notes.push(req.body);
-    strNotes = JSON.stringify(notes);
+    var strNotes = JSON.stringify(notes);
     fs.writeFile(outputPath, strNotes, (err) => {
         if(err) throw err;
         console.log("New note saved");
     });
+    res.send("saved");
 });
 
+app.delete("/api/notes/:id", function(req, res) {
+    var index = req.body.index;
+    var temp = [];
+    for (var i = 0; i < notes.length; i++) {
+        if (i !== parseInt(index)) {
+          temp.push(notes[i]);
+        }
+    }
+    newNotes = temp;
+    var strNotes = JSON.stringify(newNotes);
+    fs.writeFile(outputPath, strNotes, (err) => {
+        if(err) throw err;
+        console.log("Deleted");
+    });
+    res.send("deleted");
+})
 
 app.listen(PORT, function() {
     console.log("App listening on PORT: " + PORT);
